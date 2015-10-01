@@ -1,11 +1,26 @@
 #!/bin/bash
 
-function randword {
-    dict=/usr/share/dict/words
-    int=$(od -A n -t u -N 4 /dev/urandom)
-    words=$(wc $dict | awk ' { print $1 } ')
-    index=$((int % words))
-    awk -v lineno="$index" 'lineno==NR{print;exit}' $dict
+DICT=/usr/share/dict/words
+
+dictsize() {
+    wc -l < $DICT
 }
 
-echo "$(randword) $(randword) $(randword) $(randword) $(randword) $(randword) $(randword) $(randword)"
+randword () {
+    int=$(od -A n -t u -N 4 /dev/urandom)
+    index=$((int % $(dictsize)))
+    awk -v lineno="$index" 'lineno==NR{print;exit}' $DICT
+}
+
+COUNT=${1:-8}
+if [[ $COUNT -lt 1 ]]
+then
+    printf "error, <count> should be at least 1"
+fi
+
+printf "Creating password with %.2f bits of entropy...\n" "$(echo "$COUNT*l($(dictsize))/l(2)" | bc -l)"
+for ((i=0;i<COUNT;i++)); do
+    printf "%s " "$(randword)"
+done
+
+printf "\n"

@@ -10,3 +10,12 @@ master password and the website domain. We use the first 16 characters after
 base64 encoding the key because most webservices have a small maximum password
 size and only support a subset of characters. Each site password should have
 16*6 = 96 bits of entropy.
+
+## Installation
+`make install`
+
+## Uninstallation
+`make uninstall`
+
+## System Requirements
+Uses OS X specific technology (pbcopy, path to dictionary); tested on 10.10
