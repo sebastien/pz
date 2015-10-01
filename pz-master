@@ -1,0 +1,11 @@
+#!/bin/bash
+
+function randword {
+    dict=/usr/share/dict/words
+    int=$(od -A n -t u -N 4 /dev/urandom)
+    words=$(wc $dict | awk ' { print $1 } ')
+    index=$((int % words))
+    awk -v lineno="$index" 'lineno==NR{print;exit}' $dict
+}
+
+echo "$(randword) $(randword) $(randword) $(randword) $(randword) $(randword) $(randword) $(randword)"
