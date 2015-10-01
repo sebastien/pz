@@ -7,6 +7,8 @@ import hashlib
 import sys
 import base64
 
+SLEEP_TIME=7
+
 def writeClipboard(content):
     process = subprocess.Popen('pbcopy', env={'LANG': 'en_US.UTF-8'}, stdin=subprocess.PIPE)
     process.communicate(content.encode('utf-8'))
@@ -26,8 +28,12 @@ def main():
     try:
         password = base64.b64encode(hashlib.pbkdf2_hmac('sha256', master, domain, 1000000))[:15]
         writeClipboard(password)
-        print "password ready"
-        time.sleep(7)
+        print "password ready ({} seconds to paste password)".format(SLEEP_TIME)
+        for _ in range(0, SLEEP_TIME):
+            time.sleep(1)
+            print ".",
+            sys.stdout.flush()
+        print ""
     finally: # if user sends a KeyboardInterrupt, wipe the clipboard before exiting
         writeClipboard("null")
         print "wiped"
